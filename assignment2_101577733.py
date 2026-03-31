@@ -37,6 +37,13 @@ class NetworkTool:
     def __init__(self, target: str):
         self.__target = target
 
+    # Q3: 
+    """
+    The benefit of using the @property tag and the @target.setter are that they allow the getter and setter
+    functions to have the same names as the actual field. In this case "target". 
+    This creates simplification. It simplifies the code needed to access these getters and setters. It also allows
+    one to obscure the real name of the field.
+    """
     @property
     def target(self):
         return self.__target
@@ -51,11 +58,6 @@ class NetworkTool:
     def __del__(self):
         print("NetworkTool instance destroyed")
 
-
-
-
-# Q3: What is the benefit of using @property and @target.setter?
-# TODO: Your 2-4 sentence answer here... (Part 2, Q3)
 
 
 
@@ -77,9 +79,7 @@ class NetworkTool:
 #
 # - get_open_ports(self):
 #     - Use list comprehension to return only "Open" results
-#
-#     Q2: Why do we use threading instead of scanning one port at a time?
-#     TODO: Your 2-4 sentence answer here... (Part 2, Q2)
+
 #
 # - scan_range(self, start_port, end_port):
 #     - Create threads list
@@ -88,7 +88,7 @@ class NetworkTool:
 #     - Join all threads (separate loop)
 
 
-
+# Q1:
 """
 Portscanner reuses code from NetworkTool through inheritance. 
 One example of how it does this is through its setter function for the target field.
@@ -104,6 +104,13 @@ class PortScanner(NetworkTool):
         super().__del__()
         print("PortScanner instance destroyed")
 
+    # Q4: 
+    """
+    If you removed all try-except blocks from the scan_port method 
+    and tried to scan a port on a machine that is not reachable that would cause the program to crash. An exception 
+    would be raised and there would be nothing to catch it.
+
+    """
     def scan_port(self, port):
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -129,6 +136,12 @@ class PortScanner(NetworkTool):
     def get_open_ports(self):
         return [x for x in self.scan_results if x[1] == "Open"]
     
+    # Q2:
+    """
+    Using multiple threads for the purpose of scanning ports allows many ports to be scanned simultaneously,
+    which greatly reduces the amount of time it takes.
+    scanning 1024 ports without the use of threads would take much longer
+    """
     def scan_range(self, start_port, end_port):
         threads = []
         ports = self.get_open_ports()
@@ -140,15 +153,7 @@ class PortScanner(NetworkTool):
         for thread in threads:
             thread.join()
 
-
-
-# TODO: Create save_results(target, results) function (Step vii)
-# - Connect to scan_history.db
-# - CREATE TABLE IF NOT EXISTS scans (id, target, port, status, service, scan_date)
-# - INSERT each result with datetime.datetime.now()
-# - Commit, close
-# - Wrap in try-except for sqlite3.Error
-
+# I was not able to complete the SQL portions of this assignment.
 def save_results(target, results):
     conn = sqlite3.connect("scan_history.db")
     cur = conn.cursor()
@@ -165,14 +170,9 @@ def save_results(target, results):
             )
         ''')
 
+def load_past_scans():
+    pass
 
-
-# TODO: Create load_past_scans() function (Step viii)
-# - Connect to scan_history.db
-# - SELECT all from scans
-# - Print each row in readable format
-# - Handle missing table/db: print "No past scans found."
-# - Close connection
 
 
 # ============================================================
@@ -180,28 +180,12 @@ def save_results(target, results):
 # ============================================================
 if __name__ == "__main__":
     pass
-    # TODO: Get user input with try-except (Step ix)
-    # - Target IP (default "127.0.0.1" if empty)
-    # - Start port (1-1024)
-    # - End port (1-1024, >= start port)
-    # - Catch ValueError: "Invalid input. Please enter a valid integer."
-    # - Range check: "Port must be between 1 and 1024."
     try:  
         target = input("enter a target IP address: (default is 127.0.0.1)") or "127.0.0.1"
         start_port = input("enter a start port between 1 and 1024:")
         end_port = input("enter a start port between 1 and 1024:")
     except ValueError as ex: 
         "Invalid input. Please enter a valid integer."
-
-    # TODO: After valid input (Step x)
-    # - Create PortScanner object
-    # - Print "Scanning {target} from port {start} to {end}..."
-    # - Call scan_range()
-    # - Call get_open_ports() and print results
-    # - Print total open ports found
-    # - Call save_results()
-    # - Ask "Would you like to see past scan history? (yes/no): "
-    # - If "yes", call load_past_scans()
 
     ps1 = PortScanner(target)
 
@@ -212,9 +196,23 @@ if __name__ == "__main__":
     print(f"--- Scan Results for {target} ---")
     for port in open_ports:
         print(f"Port: {port.port}: {port.status} ({port.service_name})")
-    save_results(target, open_ports)
+    # save_results(target, open_ports)
+    # I unfortunately needed to comment our this line because I was not able to complete everything in time.
+
+    try:  
+        history = input("Would you like to see past scan history? (yes/no): ")
+    except ValueError as ex: 
+        "Invalid input. Please enter a valid input."
+
+    # if history == "yes":
+    #     load_past_scans()
 
 
-# Q5: New Feature Proposal
-# TODO: Your 2-3 sentence description here... (Part 2, Q5)
-# Diagram: See diagram_studentID.png in the repository root
+# Q5: 
+"""
+One feature I would add is a feature that would allow the user to only save specific ports such as https or http.
+This is a feature that could have value to users who are specifically looking for certain ports. 
+
+
+I was not able to complete a diagram in time.
+"""
