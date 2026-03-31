@@ -59,35 +59,6 @@ class NetworkTool:
         print("NetworkTool instance destroyed")
 
 
-
-
-# TODO: Create the PortScanner child class that inherits from NetworkTool (Step vi)
-# - Constructor: call super().__init__(target), initialize self.scan_results = [], self.lock = threading.Lock()
-# - Destructor: print "PortScanner instance destroyed", call super().__del__()
-#
-# - scan_port(self, port):
-#     Q4: What would happen without try-except here?
-#     TODO: Your 2-4 sentence answer here... (Part 2, Q4)
-#
-#     - try-except with socket operations
-#     - Create socket, set timeout, connect_ex
-#     - Determine Open/Closed status
-#     - Look up service name from common_ports (use "Unknown" if not found)
-#     - Acquire lock, append (port, status, service_name) tuple, release lock
-#     - Close socket in finally block
-#     - Catch socket.error, print error message
-#
-# - get_open_ports(self):
-#     - Use list comprehension to return only "Open" results
-
-#
-# - scan_range(self, start_port, end_port):
-#     - Create threads list
-#     - Create Thread for each port targeting scan_port
-#     - Start all threads (one loop)
-#     - Join all threads (separate loop)
-
-
 # Q1:
 """
 Portscanner reuses code from NetworkTool through inheritance. 
